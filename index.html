@@ -58,10 +58,31 @@
 
         /**** Parse words out of both 1 Nephi 8 and 1 Nephi 11 ****/
         function parseChapterWords() {
+            debugger;
             var wordArray = [];
-            /*************************** 3 *********************************/
-            /**** Place code here to parse words from the two chapters *****/
-            /***************************************************************/
+            var chapter8 = document.getElementById("1Nephi8").innerHTML;
+            var chapter11 = document.getElementById("1Nephi11").innerHTML;
+            var chapters = [chapter8, chapter11]
+            word = "";
+
+            for(i=0; i<chapters.length; i++){
+                for(j=0; j<chapters[i].length; j++){
+                    if(/[a-zA-Z]/.test(chapters[i][j])){
+                        if(chapters[i][j-1] != "<" && chapters[i][j+1] != ">") {
+                            word = word + chapters[i][j];
+                        }
+                    }
+                    if(word !== ""){
+                        if(/\s/.test(chapters[i][j])){
+                        wordArray.push(word);
+                        word = "";
+                        }
+                    }
+                    
+                    
+                }
+            }
+
             return wordArray;
         }
          
