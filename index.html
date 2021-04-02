@@ -6,7 +6,7 @@
     - IS537
     - Team Assignment #1
     - Team Number <<your team number here>>
-    - <<Names of all participating team members.>>
+    - Spencer Millett, Peter Madsen, Anita Wu, Dallen Magill, Desmond Jeffreys
 -->
 <html lang="en">
   <head>
@@ -41,15 +41,74 @@
     <br />
     <script>
       var AVLTreeOfLife = null;
-      /*************************** 1 *********************************/
-      /********  Place code here for AVLTree and Node   **************/
-      /********  classes and methods                    **************/
-      /***************************************************************/
+      //AVlTreeClass
+      class AVLTree {
+        constructor(value, count) {
+          this.left = null;
+          this.right = null;
+          this.value = value;
+          this.count = count
+          //Starts at 0 when it has no nodes beneath it. 
+          this.depth = 0;
+        }
 
-      function createRootNode() {
-        /*************************** 2 *********************************/
-        /*********  Place code here to create the root node      *******/
-        /***************************************************************/
+        //Get the depth 
+        setDepthBasedOnChildren() {
+          //Get the depth of the left side
+          if (this.left != null) {
+            this.depth = this.left.depth + 1;
+          }
+          //Get the depth of the right side if greater
+          if (this.right != null && this.depth <= this.right.depth) {
+            this.depth = this.right.depth + 1;
+          } 
+        }
+        //Insert node into the tree
+        insert(value, count) {
+          let childInserted = false;
+          //The words should be unique, 
+          if(this.value == value) {
+            return false;
+          }
+          //If it is less than the root count, check the left
+          else if (count < this.count) {
+            //If left is null, add a node to the left
+            if (this.left == null) {
+              this.left = new AVLTree(value, count);
+              childInserted = true;
+            }
+            //If not null, recursively call the insert function, making the node on the left the root.
+            else {
+              childInserted = this.left.insert(value, count);
+              //Balance Function?
+            }
+          }
+          //If it is greater than the root count, check the right. 
+          else if (count > this.count){
+            //If the right is null, add a node to the right.
+            if (this.right == null) {
+              this.right = new AVLTree(value, count);
+              childInserted = true;
+            }
+            //If not null, recursively call the insert function, making the node on the right the root.
+            else {
+              childInserted = this.right.insert(value, count);
+              //Balance Function?
+            }
+          }
+
+          //To stop the recursive loop
+          if (childInserted == true) {
+            this.setDepthBasedOnChildren();
+            return childInserted;
+          }
+        }
+      }
+
+      function createRootNode(firstValue) {
+        //Create the RootNode and insert the first Value into the node
+        const treeRoot = new AVLTree(firstValue[0], firstValue[1]);
+        return treeRoot;
       }
 
       /******* Main functional Steps ******/
@@ -58,7 +117,7 @@
         var countedWords = countUniqueWords(
           chapterWords
         ); /*** function code needed ***/
-        var avlTreeRoot = createRootNode(); /*** function code needed ***/
+        var avlTreeRoot = createRootNode(countedWords[0]); /*** function code needed ***/
         var avlTreeOfLife = buildAVLTree(
           avlTreeRoot,
           countedWords
@@ -72,7 +131,6 @@
 
       /**** Parse words out of both 1 Nephi 8 and 1 Nephi 11 ****/
       function parseChapterWords() {
-        debugger;
         var wordArray = [];
         var chapter8 = document.getElementById("1Nephi8").innerHTML;
         var chapter11 = document.getElementById("1Nephi11").innerHTML;
@@ -133,15 +191,23 @@
         return wordCountArray;
       }
 
-      /******    Function to build Hash Table ******/
-      function buildAVLTree(wordCountArray) {
-        var nodeCount = 0;
-        /**************************** 5 **********************************/
-        /*********  Place code here to build (fill) the hash table  *******/
-        /******************************************************************/
+      /******    Function to build AVL Tree ******/
+      function buildAVLTree(root, countedWords) {
+        let nodeCount = 0;
+        //insert each pair.
+        countedWords.forEach((item) => {
+          //Skip the first set because they are already inserted.
+          if(nodeCount != 0) {
+          root.insert(item[0], item[1]);
+          }
+          nodeCount++;
+        })
+        
+
+
         document.getElementById("treeInfo").innerHTML =
           "AVL Tree created with " + nodeCount + " nodes";
-        return avlTree;
+        return root;
       }
 
       function getWordCount(word) {
