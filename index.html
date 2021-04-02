@@ -63,6 +63,85 @@
             this.depth = this.right.depth + 1;
           } 
         }
+
+        rotateRR() {
+          // Hold the current root and left values for later
+          let valueBefore = this.value;
+          let leftBefore = this.left;
+
+          // Replacing the root value with the right value
+          this.value = this.right.value;
+
+          // Moving the right node to the left slot
+          this.left = this.right;
+          // Moving the original right right to be just right now
+          this.right = this.right.right;
+          // Moving the new left left node over to left right
+          this.left.right = this.left.left;
+          // Plugging our held left back in as left left now
+          this.left.left = leftBefore;
+          // Updating our right value to be our original value
+          this.left.value = valueBefore;
+
+          // Updating the depths
+          this.left.setDepthBasedOnChildren();
+          this.setDepthBasedOnChildren();
+        }
+
+        rotateLL() {
+          // Hold the current root and right values for later
+          let valueBefore = this.value;
+          let rightBefore = this.right;
+
+          // Replacing the root value with the left value
+          this.value = this.left.value;
+
+          // Moving the left node to the right slot
+          this.right = this.left;
+          // Moving the original left left to be just left now
+          this.left = this.left.left;
+          // Moving the new right right node over to right left
+          this.right.left = this.right.right;
+          // Plugging our held right back in as right right now
+          this.right.right = rightBefore;
+          // Updating our right value to be our original value
+          this.right.value = valueBefore;
+
+          // Updating the depths
+          this.right.setDepthBasedOnChildren();
+          this.setDepthBasedOnChildren();
+        }
+
+        balance() {
+          // Getting the lengths of each side
+          let rDepth = this.right == null ? 0 : this.right.depth;
+          let lDepth = this.left == null ? 0 : this.left.depth;
+
+          if (lDepth + 1 < rDepth) {
+            // RR or RL rotation based on lengths
+            let rrDepth = this.right.right == null ? 0 : this.right.right.depth;
+            let rlDepth = this.right.left == null ? 0 : this.right.left.depth;
+
+            if (rlDepth > rrDepth) {
+              // LL rotation on right child
+              this.right.rotateLL();
+            }
+
+            this.rotateRR();
+          } else if (lDepth > rDepth + 1) {
+            // LL or LR rotation based on lengths
+            let lrDepth = this.left.right == null ? 0 : this.left.right.depth;
+            let llDepth = this.left.left == null ? 0 : this.left.left.depth;
+
+            if (llDepth < lrDepth) {
+              // RR rotation of left child
+              this.left.rotateRR();
+            }
+
+            this.rotateLL();
+          } 
+        }
+
         //Insert node into the tree
         insert(value, count) {
           let childInserted = false;
@@ -80,7 +159,8 @@
             //If not null, recursively call the insert function, making the node on the left the root.
             else {
               childInserted = this.left.insert(value, count);
-              //Balance Function?
+              // Run Balance Function
+              if (childInserted == true) this.balance();
             }
           }
           //If it is greater than the root count, check the right. 
@@ -93,7 +173,8 @@
             //If not null, recursively call the insert function, making the node on the right the root.
             else {
               childInserted = this.right.insert(value, count);
-              //Balance Function?
+              // Run Balance Function
+              if (childInserted == true) this.balance();
             }
           }
 
