@@ -279,15 +279,13 @@
       /******    Function to build AVL Tree ******/
       function buildAVLTree(root, countedWords) {
         let nodeCount = 0;
-        let firstNode = true;
         //insert each pair.
         countedWords.forEach((item) => {
           //Skip the first set because they are already inserted.
-          if(!firstNode) {
+          if(nodeCount !== 0) {
             root.insert(item[0], item[1]);
-            nodeCount++;
           }
-          firstNode = false;
+          nodeCount++;
         })
         document.getElementById("treeInfo").innerHTML =
           "AVL Tree created with " + nodeCount + " nodes";
