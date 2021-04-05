@@ -283,13 +283,34 @@
           }
           nodeCount++;
         })
-        
-
-
         document.getElementById("treeInfo").innerHTML =
           "AVL Tree created with " + nodeCount + " nodes";
         return root;
       }
+
+      let notUndefined = true
+      let counter = 0
+      function traverseInOrder(word, node) {
+        let count = traverseInOrderHelper(node)
+        function traverseInOrderHelper(node) {
+          if (!node) return;
+          counter++
+          if(node.value == word ) {
+            notUndefined = false
+            return
+          }
+          traverseInOrderHelper(node.left);
+          if(notUndefined !== true) {
+            return counter
+          }
+          traverseInOrderHelper(node.right);
+          if(notUndefined !== true) {
+            return counter
+          }
+        }
+        return count
+      }
+      
 
       function getWordCount(word) {
         var wordCount = 0;
@@ -299,10 +320,26 @@
         /**************  and get the count for display  *******************/
         /********* also display the number of traversals required *********/
         /******************************************************************/
+        
+        var chapterWords = parseChapterWords(); /*** function code needed ***/
+        var countedWords = countUniqueWords(chapterWords); 
+        var avlTreeRoot = createRootNode(countedWords[0]); 
+        var avlTreeOfLife = buildAVLTree(avlTreeRoot,countedWords);
+
+        for( var i = 0; i < countedWords.length; i++ ) {
+          if( countedWords[i][0] === word ) {
+            wordCount = countedWords[i][1];
+            break;
+          }
+        }
+        traversals = traverseInOrder(word, avlTreeOfLife);      
+
         document.getElementById("wordCount").innerHTML =
           "'" + word + "' is used " + wordCount + " times.";
         document.getElementById("traversals").innerHTML =
-          "The search required " + traversals + " traversals";
+          "The search required " + traversals + " traversals"
+
+          // JSON.stringify(avlTreeOfLife)
       }
     </script>
     <br /><br />
