@@ -12,7 +12,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IS537 TA1 - Team <!--Team Number Here-->></title>
+    <title>IS537 TA1 - Team 5></title>
   </head>
   <body>
     <h1>1 Nephi 8 & 1 Nephi 11 Word Counts</h1>
@@ -40,7 +40,8 @@
     <p id="traversals" style="font-weight: bold"></p>
     <br />
     <script>
-      var AVLTreeOfLife = null;
+      const AVLTreeOfLife = null;
+      let countTraversals = 0;
       //AVlTreeClass
       class AVLTree {
         constructor(value, count) {
@@ -64,9 +65,11 @@
           } 
         }
 
+        // For fixing right balance issues
         rotateRR() {
           // Hold the current root and left values for later
           let valueBefore = this.value;
+          let countBefore = this.count;
           let leftBefore = this.left;
 
           // Replacing the root value with the right value
@@ -82,15 +85,18 @@
           this.left.left = leftBefore;
           // Updating our right value to be our original value
           this.left.value = valueBefore;
+          this.left.count = countBefore;
 
           // Updating the depths
           this.left.setDepthBasedOnChildren();
           this.setDepthBasedOnChildren();
         }
 
+        // For fixing left balance issues
         rotateLL() {
           // Hold the current root and right values for later
           let valueBefore = this.value;
+          let countBefore = this.count;
           let rightBefore = this.right;
 
           // Replacing the root value with the left value
@@ -106,12 +112,14 @@
           this.right.right = rightBefore;
           // Updating our right value to be our original value
           this.right.value = valueBefore;
+          this.right.count = countBefore;
 
           // Updating the depths
           this.right.setDepthBasedOnChildren();
           this.setDepthBasedOnChildren();
         }
 
+        // Checking the balance of the tree and balancing as needed
         balance() {
           // Getting the lengths of each side
           let rDepth = this.right == null ? 0 : this.right.depth;
@@ -150,7 +158,7 @@
             return false;
           }
           //If it is less than the root count, check the left
-          else if (count < this.count) {
+          else if (value < this.value) {
             //If left is null, add a node to the left
             if (this.left == null) {
               this.left = new AVLTree(value, count);
@@ -164,7 +172,7 @@
             }
           }
           //If it is greater than the root count, check the right. 
-          else if (count > this.count){
+          else if (value > this.value){
             //If the right is null, add a node to the right.
             if (this.right == null) {
               this.right = new AVLTree(value, count);
@@ -194,29 +202,24 @@
 
       /******* Main functional Steps ******/
       function avlTreeProcess() {
-        var chapterWords = parseChapterWords(); /*** function code needed ***/
-        var countedWords = countUniqueWords(
+        const chapterWords = parseChapterWords();
+        const countedWords = countUniqueWords(
           chapterWords
-        ); /*** function code needed ***/
-        var avlTreeRoot = createRootNode(countedWords[0]); /*** function code needed ***/
-        var avlTreeOfLife = buildAVLTree(
+        );
+        const avlTreeRoot = createRootNode(countedWords[0]);
+        avlTreeOfLife = buildAVLTree(
           avlTreeRoot,
           countedWords
-        ); /*** function code needed ***/
-        var messageArea =
-          countedWords +
-          " AVL Tree Nodes: <br>" +
-          "AVL Tree Depth: " +
-          getTreeDepth(avlTreeOfLife);
+        );
       }
 
       /**** Parse words out of both 1 Nephi 8 and 1 Nephi 11 ****/
       function parseChapterWords() {
-        var wordArray = [];
-        var chapter8 = document.getElementById("1Nephi8").innerHTML;
-        var chapter11 = document.getElementById("1Nephi11").innerHTML;
-        var chapters = [chapter8, chapter11];
-        word = "";
+        const wordArray = [];
+        const chapter8 = document.getElementById("1Nephi8").innerHTML;
+        const chapter11 = document.getElementById("1Nephi11").innerHTML;
+        const chapters = [chapter8, chapter11];
+        let word = "";
 
         for (i = 0; i < chapters.length; i++) {
           for (j = 0; j < chapters[i].length; j++) {
@@ -240,7 +243,7 @@
       /**** Counts unique occurrences of each word ****/
       function countUniqueWords(array) {
         //declare variables
-        var wordCountArray = [];
+        const wordCountArray = [];
         let isInArray = false;
         let tempWord = "";
 
@@ -279,67 +282,40 @@
         countedWords.forEach((item) => {
           //Skip the first set because they are already inserted.
           if(nodeCount != 0) {
-          root.insert(item[0], item[1]);
+            root.insert(item[0], item[1]);
           }
           nodeCount++;
         })
         document.getElementById("treeInfo").innerHTML =
           "AVL Tree created with " + nodeCount + " nodes";
         return root;
-      }
-
-      let notUndefined = true
-      let counter = 0
-      function traverseInOrder(word, node) {
-        let count = traverseInOrderHelper(node)
-        function traverseInOrderHelper(node) {
-          if (!node) return;
-          counter++
-          if(node.value == word ) {
-            notUndefined = false
-            return
-          }
-          traverseInOrderHelper(node.left);
-          if(notUndefined !== true) {
-            return counter
-          }
-          traverseInOrderHelper(node.right);
-          if(notUndefined !== true) {
-            return counter
-          }
-        }
-        return count
-      }
-      
+      }      
 
       function getWordCount(word) {
-        var wordCount = 0;
-        var traversals = 0;
-        /*************************** 6 ************************************/
-        /****  Place code here to search for the word in the tree   *******/
-        /**************  and get the count for display  *******************/
-        /********* also display the number of traversals required *********/
-        /******************************************************************/
-        
-        var chapterWords = parseChapterWords(); /*** function code needed ***/
-        var countedWords = countUniqueWords(chapterWords); 
-        var avlTreeRoot = createRootNode(countedWords[0]); 
-        var avlTreeOfLife = buildAVLTree(avlTreeRoot,countedWords);
+        let currentRoot = avlTreeOfLife;
+        let wordCount = 0;
+        word = word.toLowerCase();
+        countTraversals = 0;
 
-        for( var i = 0; i < countedWords.length; i++ ) {
-          if( countedWords[i][0] === word ) {
-            wordCount = countedWords[i][1];
+        // Run through the tree checking if the entered word is more or less than the current word
+        while (currentRoot) {
+          countTraversals++;
+          if (currentRoot.value > word) {
+            currentRoot = currentRoot.left;
+          } else if (currentRoot.value < word) {
+            currentRoot = currentRoot.right;
+          } else {
+            // We've found the word we're looking for
+            wordCount = currentRoot.count;
             break;
           }
         }
-        traversals = traverseInOrder(word, avlTreeOfLife);      
 
+        // Post results to page
         document.getElementById("wordCount").innerHTML =
           "'" + word + "' is used " + wordCount + " times.";
         document.getElementById("traversals").innerHTML =
-          "The search required " + traversals + " traversals"
-
-          // JSON.stringify(avlTreeOfLife)
+          "The search required " + countTraversals + " traversals";
       }
     </script>
     <br /><br />
