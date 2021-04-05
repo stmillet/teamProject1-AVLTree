@@ -42,6 +42,69 @@
     <script>
       const AVLTreeOfLife = null;
       let countTraversals = 0;
+
+      /**** Parse words out of both 1 Nephi 8 and 1 Nephi 11 ****/
+      function parseChapterWords() {
+        const wordArray = [];
+        const chapter8 = document.getElementById("1Nephi8").innerHTML;
+        const chapter11 = document.getElementById("1Nephi11").innerHTML;
+        const chapters = [chapter8, chapter11];
+        let word = "";
+
+        for (i = 0; i < chapters.length; i++) {
+          for (j = 0; j < chapters[i].length; j++) {
+            if (/[a-zA-Z]/.test(chapters[i][j])) {
+              if (chapters[i][j - 1] != "<" && chapters[i][j + 1] != ">") {
+                word = word + chapters[i][j];
+              }
+            }
+            if (word !== "") {
+              if (/\s/.test(chapters[i][j])) {
+                wordArray.push(word);
+                word = "";
+              }
+            }
+          }
+        }
+
+        return wordArray;
+      }
+
+      /**** Counts unique occurrences of each word ****/
+      function countUniqueWords(array) {
+        //declare variables
+        const wordCountArray = [];
+        let isInArray = false;
+        let tempWord = "";
+
+        //loop through entire chapter
+        for (outer = 0; outer < array.length; outer++) {
+          //make each word in the chapter lowercase for comparison
+          tempWord = array[outer].toLowerCase();
+
+          //loop through wordCountArray array
+          for (inner = 0; inner < wordCountArray.length; inner++) {
+            //check each word to see if it exists in wordCountArray
+            if (tempWord == wordCountArray[inner][0]) {
+              //if it does, set boolean to true and add one to the count
+              //for the word in both arrays
+              isInArray = true;
+              wordCountArray[inner][1] += 1;
+            }
+          }
+
+          //check if boolean is false
+          if (isInArray === false) {
+            //if it is, add the word with a count of 1 to both arrays
+            wordCountArray.push([tempWord, 1]);
+          } else {
+            //if it is not, set it to false
+            isInArray = false;
+          }
+        }
+        return wordCountArray;
+      }
+
       //AVlTreeClass
       class AVLTree {
         constructor(value, count) {
@@ -211,68 +274,6 @@
           avlTreeRoot,
           countedWords
         );
-      }
-
-      /**** Parse words out of both 1 Nephi 8 and 1 Nephi 11 ****/
-      function parseChapterWords() {
-        const wordArray = [];
-        const chapter8 = document.getElementById("1Nephi8").innerHTML;
-        const chapter11 = document.getElementById("1Nephi11").innerHTML;
-        const chapters = [chapter8, chapter11];
-        let word = "";
-
-        for (i = 0; i < chapters.length; i++) {
-          for (j = 0; j < chapters[i].length; j++) {
-            if (/[a-zA-Z]/.test(chapters[i][j])) {
-              if (chapters[i][j - 1] != "<" && chapters[i][j + 1] != ">") {
-                word = word + chapters[i][j];
-              }
-            }
-            if (word !== "") {
-              if (/\s/.test(chapters[i][j])) {
-                wordArray.push(word);
-                word = "";
-              }
-            }
-          }
-        }
-
-        return wordArray;
-      }
-
-      /**** Counts unique occurrences of each word ****/
-      function countUniqueWords(array) {
-        //declare variables
-        const wordCountArray = [];
-        let isInArray = false;
-        let tempWord = "";
-
-        //loop through entire chapter
-        for (outer = 0; outer < array.length; outer++) {
-          //make each word in the chapter lowercase for comparison
-          tempWord = array[outer].toLowerCase();
-
-          //loop through wordCountArray array
-          for (inner = 0; inner < wordCountArray.length; inner++) {
-            //check each word to see if it exists in wordCountArray
-            if (tempWord == wordCountArray[inner][0]) {
-              //if it does, set boolean to true and add one to the count
-              //for the word in both arrays
-              isInArray = true;
-              wordCountArray[inner][1] += 1;
-            }
-          }
-
-          //check if boolean is false
-          if (isInArray === false) {
-            //if it is, add the word with a count of 1 to both arrays
-            wordCountArray.push([tempWord, 1]);
-          } else {
-            //if it is not, set it to false
-            isInArray = false;
-          }
-        }
-        return wordCountArray;
       }
 
       /******    Function to build AVL Tree ******/
